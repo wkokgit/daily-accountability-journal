@@ -9,6 +9,7 @@ import json
 labels_S = []
 entries_S = []
 text_G = []
+text_F = []
 planningContent = []
 
 todaysDate = date.today()
@@ -17,7 +18,7 @@ todaysDateFormatted = todaysDate.strftime("%B %d, %Y")
 root=Tk()
 default_font = "Verdana"
 root.option_add("*Font", default_font)
-root.geometry("1400x750")
+root.geometry("1400x1000")
 root.option_add("*Button.Background", "ghost white")
 root.option_add("*Button.Foreground", "grey7")
 root.option_add("*Text.Background", "ghost white")
@@ -27,6 +28,9 @@ root.tk_setPalette(background='grey7', foreground="ghost white", activeBackgroun
 
 planningF = Frame(root)
 planningF.pack()
+
+feelingsF=Frame(root)
+feelingsF.pack()
 
 middle=Frame(root)
 middle.pack()
@@ -63,6 +67,7 @@ def main():
     streaks()
 
     gratitude()
+    feelings()
 
     B = Button(bottom, text ="Save", command = update)
     B.pack()
@@ -74,7 +79,7 @@ def main():
 def planning():
     with open("C:/Users/Wouter Kok/Documents/self-improj/data/planning.json", "r+") as jsonFile:
         data = json.load(jsonFile)
-        planningLabel = Label(planningF, width=40, text="LIST OF EVENTS & LEARNINGS", font=(default_font, 16))
+        planningLabel = Label(planningF, width=40, text="LIST OF TODOS & LEARNINGS", font=(default_font, 16))
         planningLabel.pack()
         planningText = Text(planningF, width=100, height=8)
 
@@ -115,6 +120,14 @@ def readStreaks():
             entries_S[i].insert(0, v)
 
             i = i + 1
+
+def feelings():
+    Label(feelingsF, text="FEELINGS", font=(default_font, 16)).grid(row = 0)
+    feelingsText = Text(feelingsF, width=100, height=1.5)
+    feelingsText.config(padx = 15, pady = 15)
+    text_F.append(feelingsText)
+    text_F[0].grid(row = 1)
+
 
 def gratitude():
     Label(middle, text="GRATITUDE & ACCEPTANCE", font=(default_font, 16)).grid(row = 0)
@@ -161,13 +174,21 @@ def test_template():
     sample_style_sheet = getSampleStyleSheet()
     flowables = []
 
-    paragraph_1_text = 'The day of ' + todaysDateFormatted
-    paragraph_1 = Paragraph(paragraph_1_text, sample_style_sheet['Heading1'])
+    spaces = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+    paragraph_1_text = '```Day 1: The day of ' + todaysDateFormatted + '```<br />'
+    paragraph_1 = Paragraph(spaces + paragraph_1_text.upper(), sample_style_sheet['Heading1'])
 
-    paragraph_2 = Paragraph("LIST OF EVENTS & LEARNINGS", sample_style_sheet['Heading2'])
-    paragraph_3 = Paragraph(planningContent[0].get(1.0, END).replace('\n','<br />\n'), sample_style_sheet['BodyText'])
+    paragraph_2 = Paragraph("\n\n**List of Todos & Learnings**", sample_style_sheet['Heading2'])
 
-    paragraph_4 = Paragraph("GRATITUDE & ACCEPTANCE", sample_style_sheet['Heading2'])
+    paragraph_3_text = planningContent[0].get(1.0, END).replace(' ', '&nbsp;')
+    paragraph_3_text = paragraph_3_text.replace('\n','<br />\n')
+    paragraph_3 = Paragraph(paragraph_3_text, sample_style_sheet['BodyText'])
+
+    paragraph_8 = Paragraph("\n\n**Feelings**", sample_style_sheet['Heading2'])
+    paragraph_9 = Paragraph(text_F[0].get(1.0, END))
+
+
+    paragraph_4 = Paragraph("**Gratitude & Acceptance**", sample_style_sheet['Heading2'])
 
     temp = ""
     for i in range(3):
@@ -175,7 +196,16 @@ def test_template():
 
     paragraph_5 = Paragraph(temp.replace('\n','<br />\n'), sample_style_sheet['BodyText'])
 
-    flowables.extend([paragraph_1, paragraph_2, paragraph_3, paragraph_4, paragraph_5])
+    paragraph_6 = Paragraph("**Streaks**", sample_style_sheet['Heading2'])
+
+    temp = ""
+
+    for i in range(len(entries_S)):
+        temp = temp + labels_S[i]['text'] + ":  " + entries_S[i].get() + "\n"
+
+    paragraph_7 = Paragraph(temp.replace('\n','<br />\n'), sample_style_sheet['BodyText'])
+
+    flowables.extend([paragraph_1, paragraph_2, paragraph_3, paragraph_8, paragraph_9, paragraph_4, paragraph_5, paragraph_6, paragraph_7])
     my_doc.build(flowables)
 
 
