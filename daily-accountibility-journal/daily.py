@@ -1,5 +1,6 @@
 from reportlab.pdfgen.canvas import Canvas
 from reportlab.platypus import SimpleDocTemplate, Paragraph
+from reportlab.lib.enums import TA_CENTER
 from reportlab.lib.styles import getSampleStyleSheet
 from tkinter import *
 from datetime import date
@@ -11,8 +12,11 @@ entries_S = []
 text_G = []
 text_F = []
 planningContent = []
+routines = []
 
+startDate = date(2020,8,30)
 todaysDate = date.today()
+daysDifference = (todaysDate - startDate).days + 1
 todaysDateFormatted = todaysDate.strftime("%B %d, %Y")
 
 root=Tk()
@@ -77,7 +81,7 @@ def main():
     mainloop()
 
 def planning():
-    with open("C:/Users/Wouter Kok/Documents/self-improj/data/planning.json", "r+") as jsonFile:
+    with open("./data/planning.json", "r+") as jsonFile:
         data = json.load(jsonFile)
         planningLabel = Label(planningF, width=40, text="LIST OF TODOS & LEARNINGS", font=(default_font, 16))
         planningLabel.pack()
@@ -91,14 +95,13 @@ def planning():
 
 
 def introduction():
-    greeting = Label(introTop, width=40, text="ROUTINE", font=(default_font, 16))
+    greeting = Label(introTop, width=40, text="ROUTINES", font=(default_font, 16))
     greeting.pack()
 
-    strin =  """SLEEP SCHEDULE : 6:00 OUT - 21:30 IN
-                INTERMITTEND FASTING: BETWEEN 19:00 and 11:00
-                ...
-                ..."""
-    moreInfo = Label(introText, text=strin, font = (default_font, 12))
+    routineString =  """SLEEP SCHEDULE : 6:00 OUT - 21:30 IN\n
+                INTERMITTEND FASTING: BETWEEN 19:00 and 11:00\n"""
+    routines.append(routineString)
+    moreInfo = Label(introText, text=routineString, font = (default_font, 12))
     moreInfo.pack()
 
 
@@ -108,7 +111,7 @@ def streaks():
     readStreaks()
 
 def readStreaks():
-    with open("C:/Users/Wouter Kok/Documents/self-improj/data/streaks.json", "r+") as jsonFile:
+    with open("./data/streaks.json", "r+") as jsonFile:
         data = json.load(jsonFile)
 
         i = 0
@@ -141,13 +144,11 @@ def gratitude():
 def update():
     updateStreaks()
     updatePlanning()
-    createTxt()
+    print("SAVED DATA TO JSON FILES")
 
-def createTxt():
-    print("aa")
 
 def updateStreaks():
-    with open("../data/streaks.json", "r+") as jsonFile:
+    with open("./data/streaks.json", "r+") as jsonFile:
         data = json.load(jsonFile)
 
     i = 0
@@ -156,27 +157,28 @@ def updateStreaks():
         data[k] = entries_S[i].get()
         i = i + 1
 
-    with open("../data/streaks.json", "w") as jsonFile:
+    with open("./data/streaks.json", "w") as jsonFile:
         json.dump(data, jsonFile)
 
 def updatePlanning():
-    with open("../data/planning.json", "r+") as jsonFile:
+    with open("./data/planning.json", "r+") as jsonFile:
         data = json.load(jsonFile)
 
     data['planning'] = planningContent[0].get(1.0, END)
 
-    with open("../data/planning.json", "w") as jsonFile:
+    with open("./data/planning.json", "w") as jsonFile:
         json.dump(data, jsonFile)
 
 def test_template():
-    pdfName = '../results/' + todaysDateFormatted + '.pdf'
+    pdfName = '../journals/' + todaysDateFormatted + '.pdf'
     my_doc = SimpleDocTemplate(pdfName)
     sample_style_sheet = getSampleStyleSheet()
+    headline_style = sample_style_sheet['Heading1']
+    headline_style.alignment = TA_CENTER
     flowables = []
 
-    spaces = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
-    paragraph_1_text = '```Day 2: The day of ' + todaysDateFormatted + '```<br />'
-    paragraph_1 = Paragraph(spaces + paragraph_1_text.upper(), sample_style_sheet['Heading1'])
+    paragraph_1_text = '```Day ' + str(daysDifference) + ': The day of ' + todaysDateFormatted + '```<br />'
+    paragraph_1 = Paragraph(paragraph_1_text.upper(), headline_style)
 
     paragraph_2 = Paragraph("\n\n**List of Todos & Learnings**", sample_style_sheet['Heading2'])
 
@@ -205,8 +207,17 @@ def test_template():
 
     paragraph_7 = Paragraph(temp.replace('\n','<br />\n'), sample_style_sheet['BodyText'])
 
-    flowables.extend([paragraph_1, paragraph_2, paragraph_3, paragraph_8, paragraph_9, paragraph_4, paragraph_5, paragraph_6, paragraph_7])
+    paragraph_10 = Paragraph("**Routines**", sample_style_sheet['Heading2'])
+    paragraph_11 = Paragraph(routines[0].replace('\n','<br />\n'), sample_style_sheet['BodyText'])
+
+
+    flowables.extend([paragraph_1, paragraph_2, paragraph_3,
+                      paragraph_8, paragraph_9, paragraph_4,
+                      paragraph_5, paragraph_6, paragraph_7,
+                      paragraph_10, paragraph_11])
+
     my_doc.build(flowables)
+    print("PDF GENERATED")
 
 
 main()
