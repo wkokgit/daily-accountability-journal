@@ -91,11 +91,11 @@ def planning():
 
 
 def introduction():
-    greeting = Label(introTop, width=40, text="EXTRA INFO", font=(default_font, 16))
+    greeting = Label(introTop, width=40, text="ROUTINE", font=(default_font, 16))
     greeting.pack()
 
     strin =  """SLEEP SCHEDULE : 6:00 OUT - 21:30 IN
-                ...
+                INTERMITTEND FASTING: BETWEEN 19:00 and 11:00
                 ...
                 ..."""
     moreInfo = Label(introText, text=strin, font = (default_font, 12))
@@ -175,7 +175,7 @@ def test_template():
     flowables = []
 
     spaces = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
-    paragraph_1_text = '```Day 1: The day of ' + todaysDateFormatted + '```<br />'
+    paragraph_1_text = '```Day 2: The day of ' + todaysDateFormatted + '```<br />'
     paragraph_1 = Paragraph(spaces + paragraph_1_text.upper(), sample_style_sheet['Heading1'])
 
     paragraph_2 = Paragraph("\n\n**List of Todos & Learnings**", sample_style_sheet['Heading2'])
