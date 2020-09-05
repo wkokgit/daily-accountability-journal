@@ -87,7 +87,6 @@ def planning():
         planningLabel.pack()
         planningText = Text(planningF, width=100, height=8)
 
-        planningText.config(padx = 15, pady = 15)
 
         planningText.insert(INSERT, data['planning'])
         planningContent.insert(0, planningText)
@@ -116,11 +115,14 @@ def readStreaks():
 
         i = 0
         for k,v in data.items():
-            labels_S.append(Label(streaksList, text=k, font=(default_font,12)))
-            labels_S[i].grid(row = i)
-            entries_S.append(Entry(streaksList, justify='center'))
-            entries_S[i].grid(row=i, column=1)
-            entries_S[i].insert(0, v)
+            if k != "lastUpdate":
+                labels_S.append(Label(streaksList, text=k, font=(default_font,12)))
+                labels_S[i].grid(row = i)
+                entries_S.append(Entry(streaksList, justify='center'))
+                entries_S[i].grid(row=i, column=1)
+                entries_S[i].insert(0, v)
+            else:
+                print("STREAKS LAST UPDATE: " +  v)
 
             i = i + 1
 
@@ -154,8 +156,11 @@ def updateStreaks():
     i = 0
 
     for k,v in data.items():
-        data[k] = entries_S[i].get()
-        i = i + 1
+        if k != "lastUpdate":
+            data[k] = entries_S[i].get()
+            i = i + 1
+        else:
+            data[k] = todaysDateFormatted
 
     with open("./data/streaks.json", "w") as jsonFile:
         json.dump(data, jsonFile)
@@ -181,8 +186,7 @@ def test_template():
     paragraph_1 = Paragraph(paragraph_1_text.upper(), headline_style)
 
     paragraph_2 = Paragraph("\n\n**List of Todos & Learnings**", sample_style_sheet['Heading2'])
-
-    paragraph_3_text = planningContent[0].get(1.0, END).replace(' ', '&nbsp;')
+    paragraph_3_text = planningContent[0].get(1.0, END)
     paragraph_3_text = paragraph_3_text.replace('\n','<br />\n')
     paragraph_3 = Paragraph(paragraph_3_text, sample_style_sheet['BodyText'])
 
@@ -202,7 +206,7 @@ def test_template():
 
     temp = ""
 
-    for i in range(len(entries_S)):
+    for i in range(len(entries_S) - 1):
         temp = temp + labels_S[i]['text'] + ":  " + entries_S[i].get() + "\n"
 
     paragraph_7 = Paragraph(temp.replace('\n','<br />\n'), sample_style_sheet['BodyText'])
