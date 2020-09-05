@@ -1,6 +1,4 @@
-
-def main():
-
+from daily-accountibility-journal import app
 
 if __name__ == '__main__':
-    main()
+    app.run()
