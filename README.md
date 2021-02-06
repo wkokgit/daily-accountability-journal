@@ -14,4 +14,4 @@ Go to folder daily-accountibility-journal.
 Start program with:
 ```py daily.py```
 
-
+You can also run the progam quickly with the batch file in ```bin```, but you should have a virtual env called venv, and it cannot be conda.
