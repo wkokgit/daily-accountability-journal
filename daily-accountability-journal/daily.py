@@ -206,7 +206,7 @@ def test_template():
 
     temp = ""
 
-    for i in range(len(entries_S) - 1):
+    for i in range(len(entries_S)):
         temp = temp + labels_S[i]['text'] + ":  " + entries_S[i].get() + "\n"
 
     paragraph_7 = Paragraph(temp.replace('\n','<br />\n'), sample_style_sheet['BodyText'])
